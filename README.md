@@ -73,6 +73,38 @@ data class UtbetalteSykepengeperioder(
 }
 ```
 
+- `POST /utbetalingshistorikk/{fødselsnummer}`: Lagrer et ønsket svar på oppslag gitt et fødselsnummer.
+
+Forventer en payload som oppfyller:
+
+```
+data class Utbetalingsperiode(
+    val fom: LocalDate?,
+    val tom: LocalDate?,
+    val dagsats: Double,
+    val grad: String,
+    val typetekst: String,
+    val organisasjonsnummer: String
+)
+```
+
+ála
+
+```
+{
+  [
+    {
+        "fom": "2020-06-01",
+        "tom": "2020-06-25",
+        "dagsats" = 1234.0,
+        "grad" = "100",
+        "typetekst" = "Utbetaling",
+        "organisasjonsnummer" = orgnummer
+    }
+  ]
+}
+```
+
 ## Henvendelser
 Spørsmål knyttet til koden eller prosjektet kan stilles som issues her på GitHub.
 

@@ -28,7 +28,8 @@ fun main() {
 }
 
 private val log = LoggerFactory.getLogger("SparkelSykepengerMock")
-private val svar = mutableMapOf<String, List<Sykepengehistorikk>>()
+private val svarSykepengehistorikk = mutableMapOf<String, List<Sykepengehistorikk>>()
+private val svarUtbetalingsperioder = mutableMapOf<String, List<Utbetalingsperiode>>()
 
 class ApplicationBuilder : RapidsConnection.StatusListener {
     private val rapidsConnection =
@@ -39,7 +40,8 @@ class ApplicationBuilder : RapidsConnection.StatusListener {
             routing {
                 post("/reset") {
                     log.info("Fjerner alle konfigurerte sykepengeperioder")
-                    svar.clear()
+                    svarSykepengehistorikk.clear()
+                    svarUtbetalingsperioder.clear()
                     call.respond(HttpStatusCode.OK)
                 }
                 post("/sykepengehistorikk/{fødselsnummer}") {
@@ -53,8 +55,23 @@ class ApplicationBuilder : RapidsConnection.StatusListener {
                     } catch (e: ContentTransformationException) {
                         return@post call.respond(HttpStatusCode.BadRequest, "Kunne ikke parse payload")
                     }
-                    svar[fødselsnummer] = utbetalteSykeperiode
+                    svarSykepengehistorikk[fødselsnummer] = utbetalteSykeperiode
                     log.info("Oppdatererte mocket sykepengehistorikk for fnr: ${fødselsnummer.substring(4)}*******")
+                    call.respond(HttpStatusCode.OK)
+                }
+                post("/utbetalingshistorikk/{fødselsnummer}") {
+                    val fødselsnummer = call.parameters["fødselsnummer"] ?: return@post call.respond(
+                        HttpStatusCode.BadRequest,
+                        "Requesten mangler fødselsnummer"
+                    )
+
+                    val utbetalteSykeperiode = try {
+                        call.receive<List<Utbetalingsperiode>>()
+                    } catch (e: ContentTransformationException) {
+                        return@post call.respond(HttpStatusCode.BadRequest, "Kunne ikke parse payload")
+                    }
+                    svarUtbetalingsperioder[fødselsnummer] = utbetalteSykeperiode
+                    log.info("Oppdatererte mocket utbetalingshistorikk for fnr: ${fødselsnummer.substring(4)}*******")
                     call.respond(HttpStatusCode.OK)
                 }
             }
@@ -62,7 +79,8 @@ class ApplicationBuilder : RapidsConnection.StatusListener {
 
     init {
         rapidsConnection.register(this)
-        SparkelSykepengeperioderMockRiver(rapidsConnection, svar)
+        SparkelSykepengeperioderMockRiver(rapidsConnection, svarSykepengehistorikk)
+        SparkelUtbetalingsperioderMockRiver(rapidsConnection, svarUtbetalingsperioder)
     }
 
     fun start() {
