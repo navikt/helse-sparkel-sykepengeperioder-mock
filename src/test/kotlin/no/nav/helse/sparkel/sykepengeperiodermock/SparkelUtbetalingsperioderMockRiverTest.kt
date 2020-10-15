@@ -63,8 +63,10 @@ internal class SparkelUtbetalingsperioderMockRiverTest {
             "@opprettet" : "2020-05-18",
             "vedtaksperiodeId" : "vedtaksperiodeId",
             "fødselsnummer" : "$fødselsnummer",
-            "historikkFom" : "2020-01-18",
-            "historikkTom" : "2020-05-17"
+            "HentInfotrygdutbetalinger": {
+                "historikkFom": "2017-10-15",
+                "historikkTom": "2020-10-15"
+            }
         }
         """
 }
