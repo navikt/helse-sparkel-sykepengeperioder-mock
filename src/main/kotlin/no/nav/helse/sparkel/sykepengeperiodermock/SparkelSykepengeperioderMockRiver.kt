@@ -44,7 +44,7 @@ internal class SparkelSykepengeperioderMockRiver(
         val fødselsnummer = packet["fødselsnummer"].asText()
         val utbetalteSykeperiode = svar.getOrDefault(
             fødselsnummer, emptyList<Sykepengehistorikk>()
-                .also { log.info("Fant ikke forhåndskonfigurert sykepengehistorikk. Defaulter til en som er OK!") }
+                .also { log.info("Fant ikke forhåndskonfigurert sykepengehistorikk. Defaulter til en som er tom") }
         )
         packet["@løsning"] = mapOf(
             behov to objectMapper.convertValue(utbetalteSykeperiode, ArrayNode::class.java)
