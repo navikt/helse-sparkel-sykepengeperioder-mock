@@ -1,1 +1,1 @@
-rootProject.name = "risk-mock"
+rootProject.name = "sparkel-sykepengeperioder-mock"

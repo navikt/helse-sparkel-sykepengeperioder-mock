@@ -1,7 +1,7 @@
 apiVersion: nais.io/v1alpha1
 kind: Application
 metadata:
-  name: risk-mock
+  name: sparkel-sykepengeperioder
   namespace: tbd
   labels:
     team: tbd
@@ -35,12 +35,12 @@ spec:
     enabled: true
     paths:
       - mountPath: /var/run/secrets/nais.io/service_user
-        kvPath: /serviceuser/data/dev/srvriskmock
+        kvPath: /serviceuser/data/dev/srvsparkelspm
   env:
   - name: KAFKA_BOOTSTRAP_SERVERS
     value: b27apvl00045.preprod.local:8443,b27apvl00046.preprod.local:8443,b27apvl00047.preprod.local:8443
   - name: KAFKA_CONSUMER_GROUP_ID
-    value: risk-mock-v1
+    value: sparkel-sykepengeperioder-mock-v1
   - name: KAFKA_RAPID_TOPIC
     value: helse-rapid-v1
 

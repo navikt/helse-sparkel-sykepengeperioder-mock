@@ -48,7 +48,7 @@ jobs:
           ORG_GRADLE_PROJECT_githubUser: x-access-token
           ORG_GRADLE_PROJECT_githubPassword: ${{ secrets.GITHUB_TOKEN }}
         with:
-          args: --project-name=risk-mock --org=tbd-ty7 --fail-on=all
+          args: --project-name=sparkel-sykepengeperioder-mock --org=tbd-ty7 --fail-on=all
           command: monitor
 
   deployDev:

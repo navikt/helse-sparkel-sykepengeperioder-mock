@@ -1,4 +1,4 @@
-package no.nav.helse.riskmock
+package no.nav.helse.sparkel.sykepengeperiodermock
 
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
@@ -22,14 +22,13 @@ internal val objectMapper = jacksonObjectMapper()
     .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
     .registerModule(JavaTimeModule())
 
-
 fun main() {
     val applicationBuilder = ApplicationBuilder()
     applicationBuilder.start()
 }
 
-private val log = LoggerFactory.getLogger("RiskMockApi")
-private val svar = mutableMapOf<String, Risikovurdering>()
+private val log = LoggerFactory.getLogger("SparkelSykepengerMock")
+private val svar = mutableMapOf<String, List<Sykepengehistorikk>>()
 
 class ApplicationBuilder : RapidsConnection.StatusListener {
     private val rapidsConnection =
@@ -39,23 +38,23 @@ class ApplicationBuilder : RapidsConnection.StatusListener {
             }
             routing {
                 post("/reset") {
-                    log.info("Fjerner alle konfigurerte risikovurderinger")
+                    log.info("Fjerner alle konfigurerte sykepengeperioder")
                     svar.clear()
                     call.respond(HttpStatusCode.OK)
                 }
-                post("/risikovurdering/{fødselsnummer}") {
+                post("/sykepengehistorikk/{fødselsnummer}") {
                     val fødselsnummer = call.parameters["fødselsnummer"] ?: return@post call.respond(
                         HttpStatusCode.BadRequest,
                         "Requesten mangler fødselsnummer"
                     )
 
-                    val risikovurdering = try {
-                        call.receive<Risikovurdering>()
+                    val utbetalteSykeperiode = try {
+                        call.receive<List<Sykepengehistorikk>>()
                     } catch (e: ContentTransformationException) {
                         return@post call.respond(HttpStatusCode.BadRequest, "Kunne ikke parse payload")
                     }
-                    svar[fødselsnummer] = risikovurdering
-                    log.info("Oppdatererte mocket risikovurdering for fnr: ${fødselsnummer.substring(4)}*******")
+                    svar[fødselsnummer] = utbetalteSykeperiode
+                    log.info("Oppdatererte mocket sykepengehistorikk for fnr: ${fødselsnummer.substring(4)}*******")
                     call.respond(HttpStatusCode.OK)
                 }
             }
@@ -63,7 +62,7 @@ class ApplicationBuilder : RapidsConnection.StatusListener {
 
     init {
         rapidsConnection.register(this)
-        RiskMockRiver(rapidsConnection, svar)
+        SparkelSykepengeperioderMockRiver(rapidsConnection, svar)
     }
 
     fun start() {
