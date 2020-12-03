@@ -29,8 +29,8 @@ internal class SparkelSykepengeperioderMockRiver(
             validate { it.requireKey("@id") }
             validate { it.requireKey("fødselsnummer") }
             validate { it.requireKey("vedtaksperiodeId") }
-            validate { it.require("historikkFom", JsonNode::asLocalDate) }
-            validate { it.require("historikkTom", JsonNode::asLocalDate) }
+            validate { it.require("$behov.historikkFom", JsonNode::asLocalDate) }
+            validate { it.require("$behov.historikkTom", JsonNode::asLocalDate) }
         }.register(this)
     }
 
