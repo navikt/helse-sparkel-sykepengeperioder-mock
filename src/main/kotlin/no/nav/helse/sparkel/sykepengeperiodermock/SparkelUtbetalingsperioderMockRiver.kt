@@ -23,7 +23,6 @@ internal class SparkelUtbetalingsperioderMockRiver(
             validate { it.rejectKey("@løsning") }
             validate { it.requireKey("@id") }
             validate { it.requireKey("fødselsnummer") }
-            validate { it.requireKey("vedtaksperiodeId") }
             validate { it.require("$behov.historikkFom", JsonNode::asLocalDate) }
             validate { it.require("$behov.historikkTom", JsonNode::asLocalDate) }
         }.register(this)
@@ -35,7 +34,7 @@ internal class SparkelUtbetalingsperioderMockRiver(
 
     override fun onPacket(packet: JsonMessage, context: RapidsConnection.MessageContext) {
         sikkerlogg.info("mottok melding: ${packet.toJson()}")
-        log.info("besvarer behov for infotrygdutbetalingshistorikk på vedtaksperiode: {}", packet["vedtaksperiodeId"].textValue())
+        log.info("besvarer behov for infotrygdutbetalingshistorikk på id: ${packet["@id"].textValue()}")
         val fødselsnummer = packet["fødselsnummer"].asText()
         val utbetalingsperioder = svar.getOrDefault(
             fødselsnummer, emptyList<Utbetalingsperiode>()
